@@ -1,0 +1,12 @@
+target/
+Cargo.lock
+
+.DS_Store
+.idea/
+.vscode/
+.vs_code/
+Thumbs.db
+
+tmp/
+*.zip
+*.tar.*
