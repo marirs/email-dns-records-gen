@@ -56,40 +56,35 @@ pub fn generate_dns_records(
         ),
         ..Default::default()
     };
-    let dkim_rsa_pair = DkimKeyPair::generate_rsa(bits);
+    let dkim_rsa_pair = DkimKeyPair::generate_rsa(bits)?;
 
-    match dkim_rsa_pair {
-        Ok(pair) => {
-            // public key in string format
-            let public_key_str = pair
-                .public_key_x509
-                .lines()
-                .filter(|x| !x.starts_with('-'))
-                .collect::<Vec<_>>()
-                .join("");
+    // public key in string format
+    let public_key_str = dkim_rsa_pair
+        .public_key_x509
+        .lines()
+        .filter(|x| !x.starts_with('-'))
+        .collect::<Vec<_>>()
+        .join("");
 
-            // DKIM Record Key/Value
-            let dkim_record_key = format!("{selector}r._domainkey.{domain}");
-            let dkim_record_value = format!("v=DKIM1; k=rsa; h=sha256; p={public_key_str}");
+    // DKIM Record Key/Value
+    let dkim_record_key = format!("{selector}r._domainkey.{domain}");
+    let dkim_record_value = format!("v=DKIM1; k=rsa; h=sha256; p={public_key_str}");
 
-            let dkim_keys = DkimKeys {
-                public_key: pair.public_key_x509,
-                private_key: pair.private_key_x509,
-            };
-            let dkim = vec![Record {
-                record_name: dkim_record_key,
-                record_content: dkim_record_value,
-                ..Default::default()
-            }];
-            Ok(DnsRecords {
-                dkim,
-                spf,
-                dmarc,
-                dkim_keys,
-            })
-        }
-        Err(e) => Err(e),
-    }
+    let dkim_keys = DkimKeys {
+        public_key: dkim_rsa_pair.public_key_x509,
+        private_key: dkim_rsa_pair.private_key_x509,
+    };
+    let dkim = vec![Record {
+        record_name: dkim_record_key,
+        record_content: dkim_record_value,
+        ..Default::default()
+    }];
+    Ok(DnsRecords {
+        dkim,
+        spf,
+        dmarc,
+        dkim_keys,
+    })
 }
 
 fn default_type() -> String {
