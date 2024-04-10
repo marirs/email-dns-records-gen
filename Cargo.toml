@@ -30,13 +30,6 @@ path = "src/lib.rs"
 name = "records-gen"
 path = "examples/records-gen.rs"
 
-[build]
-rustflags = [
-    "-C", "target-cpu=native",
-    "-C", "link-arg=-fuse-ld=lld",
-    "-Z", "threads=8"
-]
-
 [profile.dev]
 opt-level = 3
 
