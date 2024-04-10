@@ -22,9 +22,20 @@ pub struct DkimKeys {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Record {
+    #[serde(default = "default_type")]
     pub record_type: String,
     pub record_name: String,
     pub record_content: String,
+}
+
+impl Default for Record {
+    fn default() -> Self {
+        Self {
+            record_type: default_type(),
+            record_name: "".to_string(),
+            record_content: "".to_string(),
+        }
+    }
 }
 
 pub fn generate_dns_records(
@@ -34,20 +45,20 @@ pub fn generate_dns_records(
 ) -> Result<DnsRecords> {
     let bits = bits.unwrap_or(2048);
     let spf = Record {
-        record_type: "TXT".to_string(),
         record_name: domain.to_string(),
         record_content: "v=spf1 -all".to_string(),
+        ..Default::default()
     };
     let dmarc = Record {
-        record_type: "TXT".to_string(),
         record_name: "_dmarc.".to_string() + domain,
         record_content: format!(
             "v=DMARC1; p=reject; rua=mailto:postmaster@{domain}; ruf=mailto:postmaster@{domain}"
         ),
+        ..Default::default()
     };
-    let dkim_pair = DkimKeyPair::generate_rsa(bits);
+    let dkim_rsa_pair = DkimKeyPair::generate_rsa(bits);
 
-    match dkim_pair {
+    match dkim_rsa_pair {
         Ok(pair) => {
             // public key in string format
             let public_key_str = pair
@@ -66,9 +77,9 @@ pub fn generate_dns_records(
                 private_key: pair.private_key_x509,
             };
             let dkim = vec![Record {
-                record_type: "TXT".to_string(),
                 record_name: dkim_record_key,
                 record_content: dkim_record_value,
+                ..Default::default()
             }];
             Ok(DnsRecords {
                 dkim,
@@ -79,4 +90,8 @@ pub fn generate_dns_records(
         }
         Err(e) => Err(e),
     }
+}
+
+fn default_type() -> String {
+    "TXT".to_string()
 }
