@@ -47,7 +47,7 @@ fn main() {
         std::process::exit(1);
     }
 
-    let dkim = gen::generate_dkim(domain, cli.get_selector(), None);
+    let dkim = gen::generate_dns_records(domain, cli.get_selector(), None);
     match dkim {
         Ok(records) => {
             println!("{} {}\n",

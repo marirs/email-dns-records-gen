@@ -27,7 +27,11 @@ pub struct Record {
     pub record_content: String,
 }
 
-pub fn generate_dkim(domain: &str, selector: &str, bits: Option<usize>) -> Result<DnsRecords> {
+pub fn generate_dns_records(
+    domain: &str,
+    selector: &str,
+    bits: Option<usize>,
+) -> Result<DnsRecords> {
     let bits = bits.unwrap_or(2048);
     let spf = Record {
         record_type: "TXT".to_string(),
