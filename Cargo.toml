@@ -9,8 +9,42 @@ edition = "2021"
 
 [dependencies]
 ahash = "0.8.0"
-ed25519-dalek = { version = "2.0", optional = true }
-rsa = { version = "0.9.6", optional = true }
+base64 = "0.22.0"
+ed25519-dalek = "2"
+rand = "0.8.5"
+rsa = "0.9.6"
 serde = { version = "1.0", features = ["derive"] }
-sha1 = { version = "0.10", features = ["oid"], optional = true }
-sha2 = { version = "0.10.6", features = ["oid"], optional = true }
+thiserror = "1.0.58"
+
+[dev-dependencies]
+clap = { version = "4.5.4", features = ["derive"] }
+colored = "2.1.0"
+prettytable-rs = "0.10.0"
+
+[lib]
+doctest = false
+name = "gen"
+path = "src/lib.rs"
+
+[[example]]
+name = "records-gen"
+path = "examples/records-gen.rs"
+
+[build]
+rustflags = [
+    "-C", "target-cpu=native",
+    "-C", "link-arg=-fuse-ld=lld",
+    "-Z", "threads=8"
+]
+
+[profile.dev]
+opt-level = 3
+
+[profile.release]
+codegen-units = 1
+debug-assertions = false
+debug = false
+opt-level = 3
+lto = true
+panic = "abort"
+strip = "debuginfo"
