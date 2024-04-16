@@ -17,5 +17,7 @@ pub enum Error {
     #[error("SPKI error: {0}")]
     Spki(#[from] rsa::pkcs8::spki::Error),
     #[error("Ed25519 crypto error: {0}")]
-    Ed25519(#[from] ed25519_dalek::ed25519::Error),
+    Ed25519(#[from] ed25519_dalek::pkcs8::Error),
+    #[error("Error: {0}")]
+    Generic(String),
 }
