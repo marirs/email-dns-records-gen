@@ -10,7 +10,7 @@ edition = "2021"
 [dependencies]
 ahash = "0.8.0"
 base64 = "0.22.0"
-ed25519-dalek = { version = "2.1.1", default-features = false, features=["rand_core", "pkcs8", "alloc", "pem"] }
+ed25519-dalek = { version = "2", default-features = false, features=["rand_core", "pkcs8", "alloc", "pem"] }
 rand = "0.8.5"
 rsa = "0.9.6"
 serde = { version = "1.0", features = ["derive"] }
